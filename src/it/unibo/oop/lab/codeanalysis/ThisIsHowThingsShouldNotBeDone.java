@@ -15,7 +15,6 @@ import java.util.Collection;
  *
  */
 public class ThisIsHowThingsShouldNotBeDone {
-
     /*
      * PMD complains:
      * 
