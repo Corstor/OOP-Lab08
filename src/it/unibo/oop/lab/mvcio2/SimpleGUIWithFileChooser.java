@@ -47,7 +47,8 @@ public final class SimpleGUIWithFileChooser {
          * 2) The JTextField should be non modifiable. And, should display the
          * current selected file.
          */
-        
+        textField.setEditable(false);
+        textField.setText(new Controller().getFile().getName());
 
         /*
          * 3) On press, the button should open a JFileChooser. The program should
