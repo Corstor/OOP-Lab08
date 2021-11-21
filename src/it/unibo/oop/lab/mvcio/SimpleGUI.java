@@ -1,9 +1,13 @@
 package it.unibo.oop.lab.mvcio;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 /**
  * A very simple program using a graphical interface.
@@ -11,7 +15,8 @@ import javax.swing.JFrame;
  */
 public final class SimpleGUI {
 
-    private final JFrame frame = new JFrame();
+    private static final String TITLE = "A very simple GUI application";
+    private final JFrame frame = new JFrame(TITLE);
 
     /*
      * Once the Controller is done, implement this class in such a way that:
@@ -37,6 +42,17 @@ public final class SimpleGUI {
      * builds a new {@link SimpleGUI}.
      */
     public SimpleGUI() {
+        final JPanel canvas = new JPanel();
+        canvas.setLayout(new BorderLayout());
+
+        final JTextArea textArea = new JTextArea();
+        canvas.add(textArea, BorderLayout.CENTER);
+
+        final JButton saveButton = new JButton("Save");
+        canvas.add(saveButton, BorderLayout.SOUTH);
+
+        this.frame.setContentPane(canvas);
+        this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         /*
          * Make the frame half the resolution of the screen. This very method is
          * enough for a single screen setup. In case of multiple monitors, the
@@ -56,7 +72,12 @@ public final class SimpleGUI {
          * flag makes the OS window manager take care of the default positioning
          * on screen. Results may vary, but it is generally the best choice.
          */
-        frame.setLocationByPlatform(true);
+        this.frame.setLocationByPlatform(true);
+        this.frame.setVisible(true);
+    }
+
+    public static void main(final String... args) {
+        new SimpleGUI();
     }
 
 }
