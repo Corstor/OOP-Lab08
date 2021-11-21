@@ -8,8 +8,11 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import it.unibo.oop.lab.mvcio.Controller;
@@ -43,12 +46,22 @@ public final class SimpleGUIWithFileChooser {
         final JButton browseButton = new JButton("Browse");
         innerCanvas.add(browseButton, BorderLayout.LINE_END);
 
+        /*
+         * Add the JTextArea and JButton as in mvcio
+         */
+        final JTextArea textArea = new JTextArea();
+        canvas.add(textArea, BorderLayout.CENTER);
+
+        final JButton saveButton = new JButton("Save");
+        canvas.add(saveButton, BorderLayout.SOUTH);
+
         /* 
          * 2) The JTextField should be non modifiable. And, should display the
          * current selected file.
          */
         textField.setEditable(false);
-        textField.setText(new Controller().getFile().getName());
+        final Controller controller = new Controller();
+        textField.setText(controller.getFile().getName());
 
         /*
          * 3) On press, the button should open a JFileChooser. The program should
@@ -59,14 +72,39 @@ public final class SimpleGUIWithFileChooser {
          * shown telling the user that an error has occurred (use
          * JOptionPane.showMessageDialog()).
          */
-        
+        browseButton.addActionListener(new ActionListener() {
 
-        /*
-         * 4) When in the controller a new File is set, also the graphical interface
-         * must reflect such change. Suggestion: do not force the controller to
-         * update the UI: in this example the UI knows when should be updated, so
-         * try to keep things separated.
-         */
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                final JFileChooser fileChooserDialog = new JFileChooser();
+                final int choose = fileChooserDialog.showSaveDialog(canvas);
+
+                if (choose == JFileChooser.APPROVE_OPTION) {
+                    controller.setFile(fileChooserDialog.getSelectedFile());
+                    /*
+                     * 4) When in the controller a new File is set, also the graphical interface
+                     * must reflect such change. Suggestion: do not force the controller to
+                     * update the UI: in this example the UI knows when should be updated, so
+                     * try to keep things separated.
+                     */
+                    textField.setText(controller.getFile().getName());
+                } else if (choose != JFileChooser.CANCEL_OPTION) {
+                    JOptionPane.showMessageDialog(fileChooserDialog, "There has been an error", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        saveButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                try {
+                    controller.writeLine(textArea.getText());
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
 
         this.frame.setContentPane(canvas);
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
