@@ -1,7 +1,6 @@
 package it.unibo.oop.lab.advanced;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
@@ -10,11 +9,6 @@ import java.util.StringTokenizer;
  */
 public final class DrawNumberApp implements DrawNumberViewObserver {
 
-    private static final String SEP = File.separator;
-    private static final String PATH = System.getProperty("user.home") 
-                                       + SEP + "OOP" + SEP + "Lab" + SEP 
-                                       + "Eclipse-workspace" + SEP + "lab08" 
-                                       + SEP + "res" + SEP + "config.yml";
     private int min;
     private int max;
     private int attempts;
