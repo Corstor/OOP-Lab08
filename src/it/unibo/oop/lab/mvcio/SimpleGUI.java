@@ -3,6 +3,9 @@ package it.unibo.oop.lab.mvcio;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -73,6 +76,19 @@ public final class SimpleGUI {
          * on screen. Results may vary, but it is generally the best choice.
          */
         this.frame.setLocationByPlatform(true);
+
+        saveButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                try {
+                    new Controller().writeLine(textArea.getText());
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+
         this.frame.setVisible(true);
     }
 
