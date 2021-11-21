@@ -1,12 +1,23 @@
 package it.unibo.oop.lab.advanced;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
 /**
  */
 public final class DrawNumberApp implements DrawNumberViewObserver {
 
-    private static final int MIN = 0;
-    private static final int MAX = 100;
-    private static final int ATTEMPTS = 10;
+    private static final String SEP = File.separator;
+    private static final String PATH = System.getProperty("user.home") 
+                                       + SEP + "OOP" + SEP + "Lab" + SEP 
+                                       + "Eclipse-workspace" + SEP + "lab08" 
+                                       + SEP + "res" + SEP + "config.yml";
+    private int min;
+    private int max;
+    private int attempts;
     private final DrawNumber model;
     private final DrawNumberView view;
 
@@ -14,10 +25,11 @@ public final class DrawNumberApp implements DrawNumberViewObserver {
      * 
      */
     public DrawNumberApp() {
-        this.model = new DrawNumberImpl(MIN, MAX, ATTEMPTS);
         this.view = new DrawNumberViewImpl();
         this.view.setObserver(this);
         this.view.start();
+        this.initialize();
+        this.model = new DrawNumberImpl(this.min, this.max, this.attempts);
     }
 
     @Override
@@ -40,6 +52,34 @@ public final class DrawNumberApp implements DrawNumberViewObserver {
     @Override
     public void quit() {
         System.exit(0);
+    }
+
+    private void displayError(final String err) {
+        view.displayError(err);
+    }
+
+    private void initialize() {
+        try (var contents = new BufferedReader(new InputStreamReader(ClassLoader.getSystemResourceAsStream("config.yml")))) {
+            for (var configLine = contents.readLine(); configLine != null; configLine = contents.readLine()) {
+               final var line = new StringTokenizer(configLine);
+                if (line.countTokens() == 2) {
+                    final String next = line.nextToken();
+                    if (next.contains("max")) {
+                        this.max = Integer.parseInt(line.nextToken());
+                    }
+                    if (next.contains("min")) {
+                        this.min = Integer.parseInt(line.nextToken());
+                    }
+                    if (next.contains("attempts")) {
+                        this.attempts = Integer.parseInt(line.nextToken());
+                    }
+                } else {
+                    displayError("There must be a problem in the file");
+                }
+            }
+        } catch (IOException e) {
+            displayError(e.getMessage());
+        }
     }
 
     /**
