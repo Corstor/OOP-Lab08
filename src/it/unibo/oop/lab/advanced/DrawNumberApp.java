@@ -1,8 +1,11 @@
 package it.unibo.oop.lab.advanced;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.List;
 import java.util.StringTokenizer;
 
 /**
@@ -13,15 +16,17 @@ public final class DrawNumberApp implements DrawNumberViewObserver {
     private int max;
     private int attempts;
     private final DrawNumber model;
-    private final DrawNumberView view;
+    private final List<DrawNumberView> views;
 
     /**
-     * 
+     * @param views all the views that the program will manage
      */
-    public DrawNumberApp() {
-        this.view = new DrawNumberViewImpl();
-        this.view.setObserver(this);
-        this.view.start();
+    public DrawNumberApp(final DrawNumberView... views) {
+        this.views = Arrays.asList(Arrays.copyOf(views, views.length));
+        for (final var view : this.views) {
+            view.setObserver(this); 
+            view.start();
+        }
         this.initialize();
         this.model = new DrawNumberImpl(this.min, this.max, this.attempts);
     }
@@ -30,11 +35,17 @@ public final class DrawNumberApp implements DrawNumberViewObserver {
     public void newAttempt(final int n) {
         try {
             final DrawResult result = model.attempt(n);
-            this.view.result(result);
+            for (final var view : this.views) {
+                view.result(result);
+            }
         } catch (IllegalArgumentException e) {
-            this.view.numberIncorrect();
+            for (final var view : this.views) {
+                view.numberIncorrect();
+            }
         } catch (AttemptsLimitReachedException e) {
-            view.limitsReached();
+            for (final var view : this.views) {
+                view.limitsReached();
+            }
         }
     }
 
@@ -49,10 +60,12 @@ public final class DrawNumberApp implements DrawNumberViewObserver {
     }
 
     private void displayError(final String err) {
-        view.displayError(err);
+        for (final var view : this.views) {
+            view.displayError(err);
+        }
     }
 
-    private void initialize() {
+    void initialize() {
         try (var contents = new BufferedReader(new InputStreamReader(ClassLoader.getSystemResourceAsStream("config.yml")))) {
             for (var configLine = contents.readLine(); configLine != null; configLine = contents.readLine()) {
                final var line = new StringTokenizer(configLine);
@@ -79,9 +92,11 @@ public final class DrawNumberApp implements DrawNumberViewObserver {
     /**
      * @param args
      *            ignored
+     * @throws FileNotFoundException if the file is not found
      */
-    public static void main(final String... args) {
-        new DrawNumberApp();
+    public static void main(final String... args) throws FileNotFoundException {
+        new DrawNumberApp(new DrawNumberViewImpl(), new PrintStreamView(System.out), 
+                          new PrintStreamView("output.log"), new DrawNumberViewImpl());
     }
 
 }
