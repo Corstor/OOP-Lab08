@@ -17,7 +17,7 @@ public class ControllerImpl implements Controller {
      * {@inheritDoc}
      */
     @Override
-    public void setStringToPrint(String string) throws IllegalArgumentException {
+    public void setStringToPrint(final String string) {
         if (string != null) {
             this.string = string;
         } else {
@@ -45,9 +45,10 @@ public class ControllerImpl implements Controller {
      * {@inheritDoc}
      */
     @Override
-    public void print() throws IllegalStateException {
+    public void print() {
         if (this.string != null) {
             System.out.println(this.string);
+            this.history.add(this.string);
         } else {
             throw new IllegalStateException();
         }

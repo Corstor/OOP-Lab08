@@ -17,13 +17,12 @@ public interface Controller {
      * 
      * @param string
      *              the next string to print
-     *              
      * @throws IllegalArgumentException if the argument is null
      */
-    void setStringToPrint(String string) throws IllegalArgumentException;
+    void setStringToPrint(String string);
 
     /**
-     * A method for getting the next string to print
+     * A method for getting the next string to print.
      * 
      * @return the string to print
      */
@@ -31,7 +30,7 @@ public interface Controller {
 
     /** 
      * A method for getting the history of the printed strings (in form of a List
-     * of Strings)
+     * of Strings).
      * 
      * @return the list of strings that have been printed before
      */
@@ -43,6 +42,6 @@ public interface Controller {
      * 
      * @throws IllegalStateException if the current string is null
      */
-    void print() throws IllegalStateException;
+    void print();
 
 }
